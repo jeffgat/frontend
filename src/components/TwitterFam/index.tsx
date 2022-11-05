@@ -8,6 +8,7 @@ import { useActiveBreakpoint } from "../../utils/use-active-breakpoint";
 import ImageWithTooltip from "../ImageWithTooltip";
 import Modal from "../Modal";
 import FamTooltip from "../FamTooltip";
+import scrollbarStyles from "../../styles/Scrollbar.module.scss";
 import Twemoji from "../Twemoji";
 
 // See if merging with leaderboards tooltip makes sense after making it more generic.
@@ -126,6 +127,12 @@ const TwitterFam: FC = () => {
       ? (new Array(120).fill(undefined) as undefined[])
       : profiles;
 
+  // Create 6000 profiles (mock data)
+  let allProfiles = [];
+  for (let i = 0; i < 50; i++) {
+    allProfiles.push(...currentProfiles);
+  }
+
   const {
     attributes,
     handleClickImage,
@@ -178,27 +185,34 @@ const TwitterFam: FC = () => {
         </CopyToClipboard>
       </div>
       <div className="h-16"></div>
-      <div className="flex flex-wrap justify-center">
-        {currentProfiles.map((profile, index) => (
-          <ImageWithTooltip
-            key={profile?.profileUrl ?? index}
-            className="m-2 h-10 w-10 select-none"
-            imageUrl={profile?.profileImageUrl}
-            isDoneLoading={profile !== undefined}
-            skeletonDiameter="40px"
-            onMouseEnter={(ref) =>
-              !md || profile === undefined
-                ? () => undefined
-                : handleImageMouseEnter(profile, ref)
-            }
-            onMouseLeave={() =>
-              !md ? () => undefined : handleImageMouseLeave()
-            }
-            onClick={() => handleClickImage(profile)}
-            height={40}
-            width={40}
-          />
-        ))}
+      {/* <div className="flex flex-wrap justify-center"> */}
+      <div className="w-full overflow-hidden">
+        <div
+          className={`grid grid-flow-col grid-rows-6 gap-2 overflow-x-scroll 
+          ${scrollbarStyles["styled-scrollbar-horizontal"]}
+          ${scrollbarStyles["styled-scrollbar"]}`}
+        >
+          {allProfiles.map((profile, index) => (
+            <ImageWithTooltip
+              key={profile?.profileUrl ?? index}
+              className="m-2 h-10 w-10 select-none"
+              imageUrl={profile?.profileImageUrl}
+              isDoneLoading={profile !== undefined}
+              skeletonDiameter="40px"
+              onMouseEnter={(ref) =>
+                !md || profile === undefined
+                  ? () => undefined
+                  : handleImageMouseEnter(profile, ref)
+              }
+              onMouseLeave={() =>
+                !md ? () => undefined : handleImageMouseLeave()
+              }
+              onClick={() => handleClickImage(profile)}
+              height={40}
+              width={40}
+            />
+          ))}
+        </div>
       </div>
       <>
         <div
