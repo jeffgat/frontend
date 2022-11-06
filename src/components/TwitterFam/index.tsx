@@ -1,4 +1,4 @@
-import { FC, forwardRef, RefObject, useEffect } from "react";
+import { CSSProperties, FC, forwardRef, RefObject, useEffect } from "react";
 import { useCallback, useRef, useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { usePopper } from "react-popper";
@@ -126,19 +126,28 @@ const TwitterFam: FC = () => {
 
   // Support profile skeletons.
   const currentProfiles =
-  profiles === undefined
-  ? (new Array(120).fill(undefined) as undefined[])
-  : profiles;
-  
+    profiles === undefined
+      ? (new Array(120).fill(undefined) as undefined[])
+      : profiles;
+
   // Create 6000 profiles (mock data)
-  const allProfiles: any[] = [];
+  const allProfiles: FamProfile[] = [];
   for (let i = 0; i < 83; i++) {
-    allProfiles.push(...currentProfiles);
+    allProfiles.push(...(currentProfiles as FamProfile[]));
   }
 
-  const RenderImageWithTooltip = ({ style, columnIndex, rowIndex }: any) => {
+  interface RenderImageWithTooltipProps {
+    columnIndex: number;
+    rowIndex: number;
+    style: CSSProperties;
+  }
+  const RenderImageWithTooltip = ({
+    style,
+    columnIndex,
+    rowIndex,
+  }: RenderImageWithTooltipProps) => {
     // Don't have access to a single index, need to manually create one from colum and row
-    let index = columnIndex + rowIndex;
+    let index: number = columnIndex + rowIndex;
     const columnLength = COLUMN_LENGTH - 1;
     for (let currentRow = 0; currentRow < rowIndex; currentRow++) {
       index += columnLength;
@@ -148,14 +157,14 @@ const TwitterFam: FC = () => {
         <ImageWithTooltip
           key={index}
           // key={allProfiles[index]?.profileUrl ?? index} // Would be using this with real data
-          className="h-10 max-h-10 w-10 select-none p-1" 
+          className="h-10 max-h-10 w-10 select-none p-1"
           imageUrl={allProfiles[index]?.profileImageUrl}
           isDoneLoading={allProfiles[index] !== undefined}
           skeletonDiameter="40px"
           onMouseEnter={(ref) =>
             !md || allProfiles[index] === undefined
               ? () => undefined
-              : handleImageMouseEnter(allProfiles[index], ref)
+              : handleImageMouseEnter(allProfiles[index]!, ref)
           }
           onMouseLeave={() => (!md ? () => undefined : handleImageMouseLeave())}
           onClick={() => handleClickImage(allProfiles[index])}
