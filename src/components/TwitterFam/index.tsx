@@ -1,4 +1,4 @@
-import type { FC, RefObject } from "react";
+import { FC, forwardRef, RefObject, useEffect } from "react";
 import { useCallback, useRef, useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { usePopper } from "react-popper";
@@ -10,6 +10,8 @@ import Modal from "../Modal";
 import FamTooltip from "../FamTooltip";
 import scrollbarStyles from "../../styles/Scrollbar.module.scss";
 import Twemoji from "../Twemoji";
+import { FixedSizeGrid as Grid } from "react-window";
+import { setRequestMeta } from "next/dist/server/request-meta";
 
 // See if merging with leaderboards tooltip makes sense after making it more generic.
 export const useTooltip = () => {
@@ -113,6 +115,7 @@ export const useTooltip = () => {
 const TwitterFam: FC = () => {
   const profiles = useProfiles()?.profiles;
   const { md } = useActiveBreakpoint();
+  const COLUMN_LENGTH = 1000;
 
   // Copy batsound feedback
   const [isCopiedFeedbackVisible, setIsCopiedFeedbackVisible] = useState(false);
@@ -123,15 +126,45 @@ const TwitterFam: FC = () => {
 
   // Support profile skeletons.
   const currentProfiles =
-    profiles === undefined
-      ? (new Array(120).fill(undefined) as undefined[])
-      : profiles;
-
+  profiles === undefined
+  ? (new Array(120).fill(undefined) as undefined[])
+  : profiles;
+  
   // Create 6000 profiles (mock data)
-  let allProfiles = [];
-  for (let i = 0; i < 50; i++) {
+  const allProfiles: any[] = [];
+  for (let i = 0; i < 83; i++) {
     allProfiles.push(...currentProfiles);
   }
+
+  const RenderImageWithTooltip = ({ style, columnIndex, rowIndex }: any) => {
+    // Don't have access to a single index, need to manually create one from colum and row
+    let index = columnIndex + rowIndex;
+    const columnLength = COLUMN_LENGTH - 1;
+    for (let currentRow = 0; currentRow < rowIndex; currentRow++) {
+      index += columnLength;
+    }
+    return (
+      <div style={style}>
+        <ImageWithTooltip
+          key={index}
+          // key={allProfiles[index]?.profileUrl ?? index} // Would be using this with real data
+          className="h-10 max-h-10 w-10 select-none p-1" 
+          imageUrl={allProfiles[index]?.profileImageUrl}
+          isDoneLoading={allProfiles[index] !== undefined}
+          skeletonDiameter="40px"
+          onMouseEnter={(ref) =>
+            !md || allProfiles[index] === undefined
+              ? () => undefined
+              : handleImageMouseEnter(allProfiles[index], ref)
+          }
+          onMouseLeave={() => (!md ? () => undefined : handleImageMouseLeave())}
+          onClick={() => handleClickImage(allProfiles[index])}
+          height={40}
+          width={40}
+        />
+      </div>
+    );
+  };
 
   const {
     attributes,
@@ -185,34 +218,20 @@ const TwitterFam: FC = () => {
         </CopyToClipboard>
       </div>
       <div className="h-16"></div>
-      {/* <div className="flex flex-wrap justify-center"> */}
-      <div className="w-full overflow-hidden">
-        <div
-          className={`grid grid-flow-col grid-rows-6 gap-2 overflow-x-scroll 
-          ${scrollbarStyles["styled-scrollbar-horizontal"]}
-          ${scrollbarStyles["styled-scrollbar"]}`}
+
+      {/* All Profiles */}
+      <div className="w-[96vw]">
+        <Grid
+          className={`mx-auto ${scrollbarStyles["styled-scrollbar-horizontal"]} ${scrollbarStyles["styled-scrollbar"]}`}
+          columnCount={COLUMN_LENGTH}
+          columnWidth={40}
+          rowCount={10}
+          rowHeight={40}
+          height={440}
+          width={1200}
         >
-          {allProfiles.map((profile, index) => (
-            <ImageWithTooltip
-              key={profile?.profileUrl ?? index}
-              className="m-2 h-10 w-10 select-none"
-              imageUrl={profile?.profileImageUrl}
-              isDoneLoading={profile !== undefined}
-              skeletonDiameter="40px"
-              onMouseEnter={(ref) =>
-                !md || profile === undefined
-                  ? () => undefined
-                  : handleImageMouseEnter(profile, ref)
-              }
-              onMouseLeave={() =>
-                !md ? () => undefined : handleImageMouseLeave()
-              }
-              onClick={() => handleClickImage(profile)}
-              height={40}
-              width={40}
-            />
-          ))}
-        </div>
+          {RenderImageWithTooltip}
+        </Grid>
       </div>
       <>
         <div

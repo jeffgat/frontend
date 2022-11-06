@@ -2781,7 +2781,7 @@ react-use-websocket@^4.2.0:
   resolved "https://registry.npmjs.org/react-use-websocket/-/react-use-websocket-4.2.0.tgz"
   integrity sha512-ZovaTlc/tWX6a590fi3kMWImhyoWj46BWJWvO5oucZJzRnVVhYtes2D9g+5MKXjSdR7Es3456hB89v4/1pcBKg==
 
-react-window@^1.8.7:
+react-window@^1.8.8:
   version "1.8.8"
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.8.8.tgz#1b52919f009ddf91970cbdb2050a6c7be44df243"
   integrity sha512-D4IiBeRtGXziZ1n0XklnFGu7h9gU684zepqyKzgPNzrsrk7xOCxni+TCckjg2Nr/DiaEEGVVmnhYSlT2rB47dQ==

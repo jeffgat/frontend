@@ -38,7 +38,7 @@
     "react-popper": "^2.3.0",
     "react-spring": "^9.5.4",
     "react-use-websocket": "^4.2.0",
-    "react-window": "^1.8.7",
+    "react-window": "^1.8.8",
     "sharp": "^0.31.0",
     "twemoji": "^14.0.2"
   },

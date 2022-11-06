@@ -39,13 +39,13 @@ const ImageWithTooltip: FC<ImageWithTooltipProps> = ({
   }, []);
 
   return (
-    <>
+    <div>
       {!isDoneLoading || previewSkeletons ? (
-        <div className="m-2 leading-4">
+        <div className={className}>
           <Skeleton
             circle={true}
-            height={`${height}px`}
-            width={`${width}px`}
+            height={`${height - 8}px`}
+            width={`${width - 8}px`}
             inline
           />
         </div>
@@ -62,11 +62,11 @@ const ImageWithTooltip: FC<ImageWithTooltipProps> = ({
         >
           <Image
             className={`
-              cursor-pointer
-              rounded-full active:brightness-125
-              md:cursor-auto md:active:brightness-100
-              ${onMouseEnter !== undefined ? "hover:opacity-60" : ""}
-            `}
+                cursor-pointer
+                rounded-full active:brightness-125
+                md:cursor-auto md:active:brightness-100
+                ${onMouseEnter !== undefined ? "hover:opacity-60" : ""}
+              `}
             src={imgSrc ?? (questionMarkSvg as StaticImageData)}
             alt="logo of an ERC20 token"
             onError={onImageError}
@@ -76,7 +76,7 @@ const ImageWithTooltip: FC<ImageWithTooltipProps> = ({
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
 
